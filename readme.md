@@ -5,6 +5,8 @@ This system was created with to award clients that give their referral codes to 
 
 This is the result: https://github.com/plastina/referral-system
 
+![image](https://user-images.githubusercontent.com/87103282/187291435-5a3b1440-a94f-4f02-9020-32728d95aaa8.png)
+
 
 ## Stack used
 
