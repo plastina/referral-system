@@ -7,6 +7,8 @@ This is the result: https://github.com/plastina/referral-
 
 
 
+![image](https://user-images.githubusercontent.com/87103282/187291435-5a3b1440-a94f-4f02-9020-32728d95aaa8.png)
+
 
 ## Stack used
 
