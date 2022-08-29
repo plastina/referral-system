@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Reward System</title>
+    <link rel='stylesheet' href='/style.css' />
+  </head>
+  <body>
+    <h1>Do you want to win a reward?</h1>
+    <h4>Just in Amazona, you can win many prizes!</h4>
+    <input type="fullName" id="fullName" placeholder="Enter your full name...">
+    <input type="text" id="referralCode" placeholder="Referral code...">
+    <button id="submit">Submit</button>
+    <script>
+      $('#submit').on('click', function(e) {
+        e.preventDefault();
+        $.ajax({
+          url: '/',
+          type: "POST",
+          data: {
+            'fullName': $('#fullName').val(),
+            'referrer': $('#referralCode').val()
+          },
+          success: function(res) {
+            alert('Submitted with success!');
+          },
+          error: function(jqXHR, textStatus, errorMessage) {
+            alert('Invalid Referral code!');
+          }
+        });
+      })
+    </script>
+  </body>
+</html>
