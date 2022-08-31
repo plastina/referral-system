@@ -1,10 +1,12 @@
 const database = require('../models')
-const generateIndicationCode = require('../services/generate_indication_code')
+const purchaseRepository = require('../repositories/purchase-repository')
+const personRepository = require('../repositories/person-repository')
+const generateIndicationCode = require('../services/generate-string')
 
 class PurchaseController {
   static async getAllPurchases(req, res) {
     try {
-      const allPurchases = await database.Purchase.findAll()
+      const allPurchases = await purchaseRepository.findAll()
       return res.status(200).json(allPurchases)
     } catch (error) {
       return res.status(500).json(error.message)
@@ -15,11 +17,7 @@ class PurchaseController {
     const { id } = req.params
 
     try {
-      const getPurchaseById = await database.Purchase.findOne({
-        where: {
-          id: Number(id)
-        }
-      })
+      const getPurchaseById = await purchaseRepository.getById(id)
       return res.status(200).json(getPurchaseById)
     } catch (error) {
       return res.status(500).json(error.message)
@@ -33,72 +31,40 @@ class PurchaseController {
       person_name: req.body.person_name,
     }
 
+    var person;
+    var indicationCode;
 
     try {
-      const personExists = await database.Person.findOne({
-        where: {
-          person_name: purchase.person_name
-        }
-      })
-      if (personExists) {
-        const newPurchaseCreated = await database.Purchase.create({
-          product_name: purchase.product_name,
-          indication_code: purchase.indication_code,
-          person_id: personExists.id,
-        })
-        return res.status(200).json(
-          {
-            person_name: personExists.person_name,
-            indication_code: personExists.indication_code,
-            product_name: newPurchaseCreated.product_name,
-            dtBuy: newPurchaseCreated.createdAt,
-          }
-        )
-      } else {
-        const newPerson = await database.Person.create({
-          person_name: purchase.person_name,
-          points: 0,
-          indication_code: generateIndicationCode(),
-        })
-        const newPurchaseCreated = await database.Purchase.create({
-          product_name: purchase.product_name,
-          indication_code: purchase.indication_code,
-          person_id: newPerson.id,
-        })
-        return res.status(200).json({
-          person_name: newPerson.person_name,
-          indication_code: newPerson.indication_code,
+      if (purchase.indication_code != null) {
+
+        const personIndication = await personRepository.getByIndicationCode(purchase.indication_code)
+        if (personIndication == null) throw new Error("Indication code is invalid.")
+
+        const newPoints = personIndication.points + 1
+
+        await personRepository.updatePointsByIndicationCode(purchase.indication_code, newPoints)
+      }
+
+      const personExistent = await personRepository.getByName(purchase.person_name)
+
+      if (personExistent) person = personExistent;
+      else person = await personRepository.create(purchase.person_name)
+      const newPurchaseCreated = await purchaseRepository
+        .createNewPurchase(purchase.product_name, purchase.indication_code, person.id)
+
+      return res.status(200).json(
+        {
+          person_name: person.person_name,
+          indication_code: person.indication_code,
           product_name: newPurchaseCreated.product_name,
           dtBuy: newPurchaseCreated.createdAt,
-        })
-      }
+        }
+      )
     } catch (error) {
       return res.status(500).json(error.message)
     }
   }
 
-  static async updatedPurchase(req, res) {
-    const { id } = req.params
-    const newInfos = req.body
-    try {
-      await database.Purchase.update(newInfos, { where: { id: Number(id) } })
-      const updatedPurchase = await database.Purchase.findOne({ where: { id: Number(id) } })
-      return res.status(200).json(updatedPurchase)
-    } catch (error) {
-      return res.status(500).json(error.message)
-    }
-  }
-
-  static async deletePurchase(req, res) {
-    const { id } = req.params
-    try {
-      await database.Purchase.destroy({ where: { id: Number(id) } })
-      return res.status(200).json({ mensagem: `id ${id} deletado` })
-
-    } catch (error) {
-      return res.status(500).json(error.message)
-    }
-  }
 }
 
 module.exports = PurchaseController

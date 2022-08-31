@@ -1,13 +1,10 @@
 const { Router } = require('express')
-const PersonController = require('../controllers/PersonController.js')
+const PersonController = require('../controllers/person-controller.js')
 
 const router = Router()
 router
     .get('/person', PersonController.getAllPerson)
-    .get('/person/:id', PersonController.getPersonById)
-    .get('/person/code/:id', PersonController.getByPersonCode)
+    .get('/person/:id', PersonController.getByPersonId)
     .post('/person', PersonController.createPerson)
-    .put('/person/:id', PersonController.putPerson)
-    .delete('/person/:id', PersonController.deletePerson)
 
 module.exports = router

@@ -5,9 +5,7 @@ module.exports = (sequelize, DataTypes) => {
     indication_code: DataTypes.STRING,
   }, {});
   Purchase.associate = function (models) {
-    Purchase.belongsTo(models.Person, {
-      foreignKey: 'person_id'
-    })
+    Purchase.belongsTo(models.Person)
   };
   return Purchase;
 };

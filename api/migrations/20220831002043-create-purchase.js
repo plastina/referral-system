@@ -2,7 +2,7 @@
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('Purchases', {
+    return queryInterface.createTable('Purchase', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -13,26 +13,15 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING
       },
-      person_id: {
-        type: Sequelize.STRING,
-        foreignKey: true,
-      },
       indication_code: {
         allowNull: true,
         type: Sequelize.STRING
-      },
-      createdAt: {
-        allowNull: false,
-        type: Sequelize.DATE
-      },
-      updatedAt: {
-        allowNull: false,
-        type: Sequelize.DATE
       }
-    });
+    }
+    );
   },
 
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('Purchases');
+    return queryInterface.dropTable('Purchase');
   }
 };
